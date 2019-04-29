@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Greedy POV</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!-- Material Design Bootstrap -->
+  <link href="css/mdb.min.css" rel="stylesheet">
+  <!-- Your custom styles (optional) -->
+  <link href="css/style.css" rel="stylesheet">
+  <!-- jQuery UI CSS -->
+  <link href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <!--Main Navigation-->
+  <header>
+
+    <!-- Navbar -->
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
+      <div class="container">
+
+        <!-- Brand -->
+        <a class="navbar-brand waves-effect" href="https://mdbootstrap.com/docs/jquery/" target="_blank">Greedy
+          <strong class="blue-text">POV</strong>
+        </a>
+
+        <!-- Collapse -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Links -->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+          <!-- Left -->
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link waves-effect" href="#">Accueil
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link waves-effect" href="https://github.com/EmericHochart/ocr-p7" target="_blank">Documentation</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link waves-effect" href="https://cloud.google.com/maps-platform/products/"
+                target="_blank">API Google</a>
+            </li>            
+          </ul>
+
+          <!-- Right -->
+          <ul class="navbar-nav nav-flex-icons">            
+            <li class="nav-item">
+              <a href="https://twitter.com/EmericHochart" class="nav-link waves-effect" target="_blank">
+                <i class="fab fa-twitter"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="https://github.com/EmericHochart/ocr-p7" class="nav-link border border-light rounded waves-effect"
+                target="_blank">
+                <i class="fab fa-github mr-2"></i>Greedy POV
+              </a>
+            </li>
+          </ul>
+
+        </div>
+
+      </div>
+    </nav>
+    <!-- Navbar -->
+
+  </header>
+  <!--Main Navigation-->
+
+  <!--Main layout-->
+  <main class="mt-5 pt-5">
+    <div class="container">
+
+      <!--Section: Jumbotron-->
+      <section class="card aqua-gradient wow fadeIn" id="intro">
+
+        <!-- Content -->
+        <div class="card-body text-white text-center py-5 px-5 my-5">
+
+          <h1 class="mb-4">
+            <strong>Lancez votre propre site d'avis de restaurants</strong>
+          </h1>
+          <p>
+            <strong>Projet 7 du Parcours Développeur Front-End d'OpenClassRooms</strong>
+          </p>
+          <p class="mb-4">
+            <strong>Créer un service simple et utile qui permet d'avoir des avis sur des restaurants autour de soi.</strong>
+          </p>          
+
+        </div>
+        <!-- Content -->
+      </section>
+      <!--Section: Jumbotron-->
+
+      <hr class="my-5">
+
+      <!--Section: Cards-->
+      <section class="text-center">
+
+        <!--Grid row-->
+        <div class="row mb-4 wow fadeIn">
+
+          <!--Grid column-->
+          <div class="col-md-6 mb-4">
+
+            <!--Card-->
+            <div class="card" id="map">
+
+              <!--Card image-->
+              <div class="view overlay">
+                <div class="embed-responsive embed-responsive-16by9 rounded-top">
+                  <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/cXTThxoywNQ" allowfullscreen></iframe>
+                </div>
+              </div>
+
+              <!--Card content-->
+              <div class="card-body">
+                <!--Title-->
+                <h4 class="card-title">MDB Quick Start</h4>
+                <!--Text-->
+                <p class="card-text">Get started with MDBootstrap, the world's most popular Material Design framework
+                  for building
+                  responsive, mobile-first sites.</p>
+                <p class="card-text">
+                  <strong>5 minutes, a few clicks and... done. You will be surprised at how easy it is.</strong>
+                </p>
+              </div>
+
+            </div>
+            <!--/.Card-->
+
+          </div>
+          <!--Grid column-->
+
+          <!--Grid column-->
+          <div class="col-md-6 mb-4">
+
+            <!--Card-->
+            <div class="card" id="restaurant">
+
+              <!--Card image-->
+              <div class="view overlay">
+                <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80" class="card-img-top"
+                  alt="Photo by Jay Wennington on Unsplash">
+                <a href="https://mdbootstrap.com/education/tech-marketing/automated-app-introduction/" target="_blank">
+                  <div class="mask rgba-white-slight"></div>
+                </a>
+              </div>
+
+              <!--Card content-->
+              <div class="card-body">
+                  
+                <p>
+                  <label for="rating">Rating:</label>
+                  <input
+                    type="text"
+                    id="rating"
+                    readonly
+                    style="border:0; color:#f6931f; font-weight:bold;"
+                  />
+                </p>
+        
+                <div id="slider-range"></div>        
+        
+                <ul id="listeRestaurants">
+                  <li>Restaurant 1</li>
+                  <li>Restaurant 2</li>
+                  <li>Restaurant 3</li>
+                </ul>
+        
+                <div id="description"></div>
+                <hr/>
+              </div>
+
+            </div>
+            <!--/.Card-->
+
+          </div>
+          <!--Grid column-->
+
+        </div>
+        <!--Grid row-->             
+
+      </section>
+      <!--Section: Cards-->
+
+    </div>
+  </main>
+  <!--Main layout-->
+
+  <!--Footer-->
+  <footer class="page-footer text-center font-small mdb-color darken-2 mt-4 wow fadeIn">
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3">
+      
+      <!-- Social icons -->
+      <div class="pb-4">      
+
+        <a href="https://twitter.com/EmericHochart" target="_blank">
+          <i class="fab fa-twitter mr-3"></i>
+        </a>      
+        
+        <a href="https://github.com/EmericHochart/" target="_blank">
+          <i class="fab fa-github mr-3"></i>
+        </a>
+
+        <a href="https://codepen.io/emerichochart/" target="_blank">
+          <i class="fab fa-codepen mr-3"></i>
+        </a>
+      </div>
+      <!-- Social icons -->
+
+      © 2019 Copyright:
+      <a href="https://emeric.hochart.info" target="_blank"> Emeric Hochart </a>
+    
+    </div>
+    <!--/.Copyright-->
+
+  </footer>
+  <!--/.Footer-->
+
+  <!-- SCRIPTS -->
+  <!-- JQuery -->
+  <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+  <!-- JQuery UI -->
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="js/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="js/mdb.min.js"></script>
+  <!-- JS -->
+  <script type="text/javascript" src="js/ajax.js"></script>
+  <script type="text/javascript" src="js/function.js"></script>
+  <script type="text/javascript" src="js/main.js"></script>
+  <!-- API Google Maps -->
+  <script
+  src="https://maps.googleapis.com/maps/api/js?key=APIKEY&libraries=places&callback=initMap"
+  async
+  defer
+></script>
+  <!-- Initializations -->
+  <script type="text/javascript">
+    // Animations initialization
+    new WOW().init();
+
+  </script>
+  
+</body>
+
+</html>
