@@ -26,7 +26,7 @@ function initMap() {
         };
         // We center the map on the user's position
         map.setCenter(pos);
-        // Marker for the user's position
+        // Marker for the user's position (green marker)
         var markerUser = new google.maps.Marker({
           position: pos,
           map: map,
