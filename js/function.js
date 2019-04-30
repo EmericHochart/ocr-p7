@@ -45,7 +45,7 @@ function initMap() {
     handleLocationError(false, infoWindow, map.getCenter());
   }  
  
-  // Request 
+  // Request : json file recovery
   ajaxGet("json/restaurant.json", afficherRestaurants);
 
   // Init event listener on googlemap (event:bounds_changed)
@@ -55,7 +55,6 @@ function initMap() {
   map.addListener('click', function(e) {    
     placeMarkerAndPanTo(e.latLng, map);
   });
-
   
 }
 
@@ -85,7 +84,7 @@ function placeMarkerAndPanTo(latLng, map) {
     inputAddressElt.placeholder = "..."; 
     fieldsetElt.appendChild(inputAddressElt);
 
-  // Add reset button
+  // Add cancel button
     var buttonCancelElt = document.createElement("button");
     buttonCancelElt.id = "cancelRestaurant";
     buttonCancelElt.textContent = "Annuler";   
@@ -94,7 +93,8 @@ function placeMarkerAndPanTo(latLng, map) {
       document.getElementById("formAddRestaurant").remove();
     });
     fieldsetElt.appendChild(buttonCancelElt);
-
+  
+  // Add submit input
     var inputSubmitElt = document.createElement("input");
     inputSubmitElt.id = "addRestaurant";
     inputSubmitElt.type = "submit";
@@ -126,22 +126,27 @@ function placeMarkerAndPanTo(latLng, map) {
       document.getElementById("formAddRestaurant").remove();
     }, true);
     fieldsetElt.appendChild(inputSubmitElt);
+
     formElt.appendChild(fieldsetElt);
+    
     document.getElementById("restaurant").appendChild(formElt); 
 }
 
+// Add Restaurant to the array
 function addRestaurant(results, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
-    var lengthList = results.length>10?10:results.length;    
+    // Limitation of the list of restaurants to recover: 10 first restaurants
+    var lengthList = results.length>10?10:results.length; 
+    // We go through the list    
     for (var i = 0; i < lengthList; i++) {
-           
+      // Create Object Restaurant
       var restaurant = {};
       restaurant.restaurantName = results[i].name;
       restaurant.address = results[i].vicinity;
       restaurant.lat = results[i].geometry.location.lat();
       restaurant.long = results[i].geometry.location.lng();  
       restaurant.ratings = [];      
-      
+      // Request : Recovery of rewiews and ratings
       var request = {
         placeId: results[i].place_id,
         fields: ['reviews']
@@ -151,7 +156,7 @@ function addRestaurant(results, status) {
       
       service.getDetails(request, function(place, status) {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
-          // add condition on reviews
+          // add condition on reviews ///////////////////////////////////////////////////////////////// TODO
           var reviews = place.reviews;          
           reviews.forEach(function(review){
             var view = {};
@@ -159,12 +164,11 @@ function addRestaurant(results, status) {
             view.comment = review.text;
             restaurant.ratings.push(view);
           });
+          // We make sure that the restaurant is not already in the list
           var presentRestaurant = false;
           restaurants.forEach(function(item) {
             if(item.lat==restaurant.lat && item.long==restaurant.long){
               presentRestaurant = true;
-              //var position = restaurants.indexOf(item); 
-              //restaurants.splice(position, 1, restaurant);
             }
           }); 
           if(presentRestaurant == false) {
@@ -176,11 +180,13 @@ function addRestaurant(results, status) {
   }
 }
 
+// Create Marker on location
 function createMarker(place) {
   var marker = new google.maps.Marker({
     map: map,
     position: place.geometry.location
   });
+  // Add infowindow on marker 
   var infowindow = new google.maps.InfoWindow();
   google.maps.event.addListener(marker, 'click', function() {
     infowindow.setContent(place.name);
@@ -206,24 +212,25 @@ function handleBoundsChanged() {
   var lat = center.lat();
   var lng = center.lng();
   var location = { lat: lat, lng: lng };
-  
+  // Request : find restaurant around location
   var service;
   var request = {
     location: location,
     radius: '500',
     type: ['restaurant']
-  };   
-
+  };
   service = new google.maps.places.PlacesService(map);  
   service.nearbySearch(request, addRestaurant);
       
-  // delete HTML 
+  // Remove HTML 
   document.getElementById("listeRestaurants").innerHTML = "";  
-  
+
+  // If the displayed restaurant is no longer part of the restaurants to display, we delete the description
   if (!restaurantsDisplayed.includes(currentRestaurant)){
     document.getElementById("description").innerHTML = "";
   };  
 
+  // Remove all Markers
   clearMarkers();
   
   // check list  
@@ -231,7 +238,7 @@ function handleBoundsChanged() {
 
     let coordRestaurant = { lat: restaurant.lat, lng: restaurant.long };
     
-    // Calculation of the average of the comments
+    // Calculation of the average of the comments ////// TODO : ratings={} !!!!!
       var averageRating = 0;
       var numberRatings = restaurant.ratings.length;
       restaurant.ratings.forEach(function(rating) {
