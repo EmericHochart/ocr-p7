@@ -216,7 +216,7 @@ function handleBoundsChanged() {
   var service;
   var request = {
     location: location,
-    radius: '500',
+    radius: '800',
     type: ['restaurant']
   };
   service = new google.maps.places.PlacesService(map);  
@@ -261,7 +261,7 @@ function handleBoundsChanged() {
         aElt.href = "#";
         aElt.textContent = restaurant.restaurantName + " | Moyenne : " + averageRating ;        
         aElt.addEventListener('click', function(e){
-          information(restaurant);
+          information(restaurant);          
           e.preventDefault();
         });
         liElt.appendChild(aElt);
@@ -315,8 +315,12 @@ function deleteMarkers() {
 
 // Information 
 function information(restaurant){
-  // On vide la div de description
-  document.getElementById("description").innerHTML = "";  
+  // Add Modal
+  $('#sideModalTR').modal();
+
+  // On vide la div de description et du titre
+  document.getElementById("myModalLabel").innerHTML = ""; 
+  document.getElementById("myModalBody").innerHTML = "";  
   currentRestaurant = restaurant;
   var pos = {
     lat: restaurant.lat,
@@ -326,8 +330,10 @@ function information(restaurant){
   var location = pos.lat+","+ pos.lng;        
   //var url = "https://maps.googleapis.com/maps/api/streetview?size=400x400&location="+location+"&key=APIKEY";
   var url =""
+  // Titre
+  document.getElementById("myModalLabel").textContent = restaurant.restaurantName; 
   // Description
-  var description = restaurant.restaurantName + ' : ' + restaurant.address + ' ( ' + restaurant.lat + ', ' + restaurant.long + ' )';
+  var description = 'Adresse : ' + restaurant.address;
   
   var divElt = document.createElement("div");
   divElt.id = 'description-'+ restaurant.restaurantName;
@@ -349,14 +355,13 @@ function information(restaurant){
     };
     divElt.appendChild(ulElt);
   };
-  document.getElementById('description').appendChild(divElt);
+  document.getElementById('myModalBody').appendChild(divElt);
   //
   var formElt = document.createElement("form");
   var labelElt = document.createElement("label");
   labelElt.for = "rating";
   labelElt.textContent = "Notez le restaurant : ";
-  formElt.appendChild(labelElt);  
-  //formElt.onsubmit = addrating();
+  formElt.appendChild(labelElt);
   var selectElt = document.createElement("select");
   selectElt.id = "rating";
   for (i=0; i<6; i++) {
@@ -387,10 +392,11 @@ function information(restaurant){
     "comment": comment
   };
   restaurant.ratings.push(rate);
-  document.getElementById("description").innerHTML = "";  
+  //document.getElementById("myModalBody").innerHTML = "";  
   e.preventDefault(); // Annulation de l'envoi des données
+  information(restaurant);
   });
-  document.getElementById('description').appendChild(formElt);
+  document.getElementById('myModalBody').appendChild(formElt);
   // We center the map on the location
   map.setCenter(pos);
   
