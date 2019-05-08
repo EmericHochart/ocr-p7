@@ -1,9 +1,9 @@
-// Display Data
+// Display Data JSON
 function afficherRestaurants(reponse) {  
   restaurants = JSON.parse(reponse);
 }
 
-// Initialize and add the map
+// Initialize : add the map and events
 function initMap() {
   // The location by Default : Restaurant Bronco in Paris
   var defaultLocation = { lat: 48.8737815, lng: 2.3501649 };
@@ -12,9 +12,7 @@ function initMap() {
     zoom: 10,
     center: defaultLocation,
     mapTypeId: "roadmap"
-  });
-  // The marker, positioned at defaultLocation
-  addMarker(defaultLocation); 
+  });  
 
   // Try HTML5 geolocation.
   if (navigator.geolocation) {
@@ -60,56 +58,23 @@ function initMap() {
 
 // Manage Add Marker and Zoom
 function placeMarkerAndPanTo(latLng, map) {
-  // Form Add Restaurant
-    var formElt = document.createElement("form");
-    formElt.id = "formAddRestaurant";
-    var fieldsetElt = document.createElement("fieldset");
-    var legendElt = document.createElement("legend");
-    legendElt.textContent = "Coord :"+latLng.lat() + " : " + latLng.lng();
-    fieldsetElt.appendChild(legendElt);
-    var labelNameElt = document.createElement("label");
-    labelNameElt.for = "name";
-    labelNameElt.textContent = "Nom du restaurant : ";
-    fieldsetElt.appendChild(labelNameElt);     
-    var inputNameElt = document.createElement("input");
-    inputNameElt.id = "name";
-    inputNameElt.placeholder = "..."; 
-    fieldsetElt.appendChild(inputNameElt);
-    var labelAddressElt = document.createElement("label");
-    labelAddressElt.for = "address";
-    labelAddressElt.textContent = "Addresse du restaurant : ";
-    fieldsetElt.appendChild(labelAddressElt);     
-    var inputAddressElt = document.createElement("input");
-    inputAddressElt.id = "address";
-    inputAddressElt.placeholder = "..."; 
-    fieldsetElt.appendChild(inputAddressElt);
+  // Call Modal
+  $('#modalAddRestaurant').modal();
 
-  // Add cancel button
-    var buttonCancelElt = document.createElement("button");
-    buttonCancelElt.id = "cancelRestaurant";
-    buttonCancelElt.textContent = "Annuler";   
-    buttonCancelElt.addEventListener("click", function(e){
-      e.preventDefault();
-      document.getElementById("formAddRestaurant").remove();
-    });
-    fieldsetElt.appendChild(buttonCancelElt);
+  // On reset les valeurs du formulaire
+  document.getElementById('formAddRestaurant').reset();
   
-  // Add submit input
-    var inputSubmitElt = document.createElement("input");
-    inputSubmitElt.id = "addRestaurant";
-    inputSubmitElt.type = "submit";
-    inputSubmitElt.value = "Ajouter un restaurant";   
-    inputSubmitElt.addEventListener("click", function(e){
-      // add Marker
-      var marker = new google.maps.Marker({
-        position: latLng,
-        map: map
-      });
+  //legendElt.textContent = "Coord :"+latLng.lat() + " : " + latLng.lng();
+  
+  // Récupération du formulaire
+  var formElt = document.getElementById('formAddRestaurant');    
+  // Ajout d'un évènement sur le bouton
+  formElt.addEventListener("submit", function(e){ 
       // Zoom
       map.panTo(latLng);
       // Add restaurant to the array
-      var name = formElt.elements.name.value;
-      var address = formElt.elements.address.value;
+      var name = formElt.elements.addNameRestaurant.value;
+      var address = formElt.elements.addAddressRestaurant.value;
       var lat = latLng.lat();
       var lng = latLng.lng();
       var ratings = [];
@@ -120,16 +85,13 @@ function placeMarkerAndPanTo(latLng, map) {
       restaurant.long = lng;
       restaurant.ratings = ratings;
       restaurants.push(restaurant);
+      // add Marker
+      addMarker(latLng,restaurant);
       // preventDefault
-      e.preventDefault();
-      // Remove Form
-      document.getElementById("formAddRestaurant").remove();
-    }, true);
-    fieldsetElt.appendChild(inputSubmitElt);
-
-    formElt.appendChild(fieldsetElt);
-    
-    document.getElementById("restaurant").appendChild(formElt); 
+      e.preventDefault();      
+      // Close Modal
+      $('#modalAddRestaurant').modal('toggle');
+    });
 }
 
 // Add Restaurant to the array
@@ -156,8 +118,8 @@ function addRestaurant(results, status) {
       
       service.getDetails(request, function(place, status) {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
-          // add condition on reviews ///////////////////////////////////////////////////////////////// TODO
-          var reviews = place.reviews;          
+          // add condition on reviews
+          var reviews = place.reviews!==null?place.reviews:[];          
           reviews.forEach(function(review){
             var view = {};
             view.stars = review.rating;
@@ -178,20 +140,6 @@ function addRestaurant(results, status) {
       });
     }
   }
-}
-
-// Create Marker on location
-function createMarker(place) {
-  var marker = new google.maps.Marker({
-    map: map,
-    position: place.geometry.location
-  });
-  // Add infowindow on marker 
-  var infowindow = new google.maps.InfoWindow();
-  google.maps.event.addListener(marker, 'click', function() {
-    infowindow.setContent(place.name);
-    infowindow.open(map, this);
-  });
 }
 
 // Manage Location Error
@@ -244,7 +192,7 @@ function handleBoundsChanged() {
       restaurant.ratings.forEach(function(rating) {
         averageRating += rating.stars;
       });
-      numberRatings !== 0 ? averageRating = averageRating / numberRatings : averageRating = 0;        
+      numberRatings !== 0 ? averageRating = Math.round(averageRating / numberRatings*100) / 100 : averageRating = 0;        
 
       // Display the restaurant in the list if it is on the map
       if (limite.contains(coordRestaurant) && averageRating <= maxRating && averageRating >= minRating && restaurantsDisplayed.length < 10) { 
@@ -258,8 +206,13 @@ function handleBoundsChanged() {
         var liElt = document.createElement("li"); // Création d'un élément li
         var aElt = document.createElement("a");
         aElt.id = restaurant.restaurantName;
-        aElt.href = "#";
-        aElt.textContent = restaurant.restaurantName + " | Moyenne : " + averageRating ;        
+        aElt.href = "#";        
+        if (restaurant.ratings.length==0){
+          aElt.textContent = restaurant.restaurantName + " | Aucun commentaire";
+        }
+        else {
+          aElt.textContent = restaurant.restaurantName + " | Moyenne : " + averageRating ;
+        }        
         aElt.addEventListener('click', function(e){
           information(restaurant);          
           e.preventDefault();
@@ -269,7 +222,8 @@ function handleBoundsChanged() {
         
         // Showing restaurants by their coordinates on the map via a marker
         let latLng = new google.maps.LatLng(restaurant.lat, restaurant.long);        
-        addMarker(latLng);
+        addMarker(latLng,restaurant);        
+
       }
       else {
         if (restaurantsDisplayed.includes(restaurant)){
@@ -282,11 +236,15 @@ function handleBoundsChanged() {
 }
 
 // Adds a marker to the map and push to the array.
-function addMarker(location) {
+function addMarker(location,restaurant) {   
   var marker = new google.maps.Marker({
     position: location,
-    map: map
+    map: map,
+    animation: google.maps.Animation.DROP,
   });
+  // Display Modal with information on Click
+  marker.addListener('click', function(){
+    information(restaurant)});
   markers.push(marker);
 }
 
@@ -348,9 +306,13 @@ function information(restaurant){
   // Ratings
   if (restaurant.ratings.length !==0 ){
     var ulElt = document.createElement("ul");
-    for (i=0;i<restaurant.ratings.length;i++){      
+    // Limitation to 5 comments  
+    var limitationComments = restaurant.ratings.length<6?-1:restaurant.ratings.length-6;  
+    for (i=restaurant.ratings.length-1;i>limitationComments;i--){      
       var liElt = document.createElement("li");
-      liElt.textContent = "Stars : " + restaurant.ratings[i].stars + " | Comment : " + restaurant.ratings[i].comment;
+      // Check if exist comment      
+      var comment = restaurant.ratings[i].comment=="" ? " | Pas de commentaire" : (" | Commentaire : " +restaurant.ratings[i].comment);
+      liElt.textContent = "Note : " + restaurant.ratings[i].stars + comment;
       ulElt.appendChild(liElt);
     };
     divElt.appendChild(ulElt);
@@ -364,6 +326,13 @@ function information(restaurant){
   formElt.appendChild(labelElt);
   var selectElt = document.createElement("select");
   selectElt.id = "rating";
+  // Required Option value
+  selectElt.required = true; 
+  var optionDefaultElt = document.createElement("option");
+  optionDefaultElt.value = "";
+  optionDefaultElt.textContent = "votre note";
+  selectElt.appendChild(optionDefaultElt);
+  // Options
   for (i=0; i<6; i++) {
     var optionElt = document.createElement("option");
     optionElt.value = i;
@@ -377,30 +346,25 @@ function information(restaurant){
   textAreaElt.cols = 30;
   textAreaElt.placeholder = "Votre commentaire ...";
   formElt.appendChild(textAreaElt);
-    var inputElt = document.createElement("input");
+  var inputElt = document.createElement("input");
   inputElt.type = "submit";
   inputElt.value = "Valider";
   formElt.appendChild(inputElt);
-  // Affiche de toutes les données saisies ou choisies
+  // Display
   formElt.addEventListener("submit", function (e) {
   var rating = Number(formElt.elements.rating.value);
   var comment = formElt.elements.comment.value;
-  //
-  /* ICI ON VA AJOUTER LES DONNEES AU TABLEAU DE RESTAURANTS */
   var rate= {
     "stars": rating,
     "comment": comment
   };
   restaurant.ratings.push(rate);
-  //document.getElementById("myModalBody").innerHTML = "";  
-  e.preventDefault(); // Annulation de l'envoi des données
+  // Annulation de l'envoi des données    
+  e.preventDefault(); 
   information(restaurant);
   });
   document.getElementById('myModalBody').appendChild(formElt);
   // We center the map on the location
-  map.setCenter(pos);
-  
-  // Eventuellement changer la couleur du marqueur ?
-
+  map.setCenter(pos); 
   
 }

@@ -86,30 +86,7 @@
   <!--Main layout-->
   <main class="mt-5 pt-5">
     <div class="container">
-
-      <!--Section: Jumbotron-->
-      <section class="card aqua-gradient wow fadeIn" id="intro">
-
-        <!-- Content -->
-        <div class="card-body text-white text-center py-5 px-5 my-5">
-
-          <h1 class="mb-4">
-            <strong>Lancez votre propre site d'avis de restaurants</strong>
-          </h1>
-          <p>
-            <strong>Projet 7 du Parcours Développeur Front-End d'OpenClassRooms</strong>
-          </p>
-          <p class="mb-4">
-            <strong>Créer un service simple et utile qui permet d'avoir des avis sur des restaurants autour de soi.</strong>
-          </p>          
-
-        </div>
-        <!-- Content -->
-      </section>
-      <!--Section: Jumbotron-->
-
-      <hr class="my-5">
-
+      
       <!--Section: Cards-->
       <section class="text-center">
 
@@ -214,6 +191,51 @@
             </div>
             </div>
             <!-- Side Modal Top Right -->
+
+            <!-- Modal Form Add Restaurant -->
+            <div class="modal fade" id="modalAddRestaurant" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">F
+              
+              <div class="modal-dialog" role="document">
+                
+                <div class="modal-content">
+                  
+                  <div class="modal-header text-center">
+                    <h4 class="modal-title w-100 font-weight-bold">Ajouter un Restaurant</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  
+                  <form id="formAddRestaurant" name="formAddRestaurant">
+                  
+                    <div class="modal-body mx-3">
+                      
+                        <div class="md-form mb-5">                        
+                          <input type="text" id="addNameRestaurant" class="form-control validate" required>
+                          <label data-error="wrong" data-success="right" for="form1">Nom du Restaurant</label>
+                        </div>
+
+                        <div class="md-form mb-5">
+                          
+                          <input type="text" id="addAddressRestaurant" class="form-control validate" required>
+                          <label data-error="wrong" data-success="right" for="form2">Adresse du Restaurant</label>
+                        </div> 
+
+                    </div>
+                  
+                    <div class="modal-footer d-flex justify-content-center">
+                      <input id="submitRestaurant" type="submit" class="btn btn-unique" value="Ajouter"/>                    
+                    </div>
+
+                  </form>
+
+                </div>
+
+              </div>
+
+            </div>
+            <!-- Modal Form Add Restaurant -->
 
           </div>
           <!--Grid column-->
