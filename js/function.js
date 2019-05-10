@@ -51,7 +51,7 @@ function initMap() {
 
   // Init event listener (add Marker when click)
   map.addListener('click', function(e) {    
-    placeMarkerAndPanTo(e.latLng, map);
+    placeMarkerAndPanTo(e.latLng, map);    
   });
   
 }
@@ -61,37 +61,64 @@ function placeMarkerAndPanTo(latLng, map) {
   // Call Modal
   $('#modalAddRestaurant').modal();
 
+  // Location
+  var lat = latLng.lat();
+  var lng = latLng.lng();
   // On reset les valeurs du formulaire
   document.getElementById('formAddRestaurant').reset();
   
-  //legendElt.textContent = "Coord :"+latLng.lat() + " : " + latLng.lng();
-  
   // Récupération du formulaire
-  var formElt = document.getElementById('formAddRestaurant');    
+  var formElt = document.getElementById('formAddRestaurant');  
+  // Reverse geocoding
+  var geocoder = new google.maps.Geocoder;
+  // Autoremplissage de l'adresse par reverse geocoding
+  geocodeLatLng(geocoder, latLng);
   // Ajout d'un évènement sur le bouton
-  formElt.addEventListener("submit", function(e){ 
+  formElt.addEventListener("submit", function _listener(e){ 
       // Zoom
       map.panTo(latLng);
       // Add restaurant to the array
       var name = formElt.elements.addNameRestaurant.value;
       var address = formElt.elements.addAddressRestaurant.value;
-      var lat = latLng.lat();
-      var lng = latLng.lng();
+      console.log('testsubmit',latLng.lat());
       var ratings = [];
       var restaurant = {};
       restaurant.restaurantName = name;
       restaurant.address = address;
       restaurant.lat = lat;
       restaurant.long = lng;
-      restaurant.ratings = ratings;
+      restaurant.ratings = ratings;      
       restaurants.push(restaurant);
       // add Marker
       addMarker(latLng,restaurant);
       // preventDefault
-      e.preventDefault();      
+      e.preventDefault();
+      e.stopPropagation();
+      // Remove Listener
+      formElt.removeEventListener("submit", _listener, true);      
       // Close Modal
       $('#modalAddRestaurant').modal('toggle');
-    });
+
+    },true);
+}
+
+// Reverse Geocoding
+function geocodeLatLng(geocoder, latLng) {  
+  geocoder.geocode({'location': latLng}, function(results, status) {
+    if (status === 'OK') {
+      if (results[0]) {                
+        document.getElementById('addAddressRestaurant').value = results[0].formatted_address;
+        document.getElementById('addAddressRestaurant').focus();
+        lat = results[0].geometry.location.lat(); 
+        lng = results[0].geometry.location.lng();
+      } else {
+        window.alert('Pas de résultat connu');        
+      }
+    } else {
+      window.alert('Echec du geocoder : ' + status);      
+    }
+  }); 
+   
 }
 
 // Add Restaurant to the array
@@ -119,7 +146,7 @@ function addRestaurant(results, status) {
       service.getDetails(request, function(place, status) {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
           // add condition on reviews
-          var reviews = place.reviews!==null?place.reviews:[];          
+          var reviews = (place.reviews!==null||!place.reviews)?place.reviews:[];         
           reviews.forEach(function(review){
             var view = {};
             view.stars = review.rating;
@@ -276,9 +303,10 @@ function information(restaurant){
   // Add Modal
   $('#sideModalTR').modal();
 
-  // On vide la div de description et du titre
+  // Clear
   document.getElementById("myModalLabel").innerHTML = ""; 
-  document.getElementById("myModalBody").innerHTML = "";  
+  document.getElementById("myModalBody").innerHTML = ""; 
+
   currentRestaurant = restaurant;
   var pos = {
     lat: restaurant.lat,
@@ -286,22 +314,24 @@ function information(restaurant){
   };
 
   var location = pos.lat+","+ pos.lng;        
-  //var url = "https://maps.googleapis.com/maps/api/streetview?size=400x400&location="+location+"&key=APIKEY";
-  var url =""
+  var url = "https://maps.googleapis.com/maps/api/streetview?size=600x600&location="+location+"&key=APIKEY";
+  ajaxGet(url,function() {
+    // Image
+    document.getElementById("myModalImg").src = url;    
+  })
+  
   // Titre
   document.getElementById("myModalLabel").textContent = restaurant.restaurantName; 
-  // Description
-  var description = 'Adresse : ' + restaurant.address;
   
+  // Description
+  var description = '<strong>Adresse : </strong>' + restaurant.address;  
   var divElt = document.createElement("div");
   divElt.id = 'description-'+ restaurant.restaurantName;
   var pElt = document.createElement("p");
-  pElt.textContent = description;
+  pElt.innerHTML = description;
   divElt.appendChild(pElt);
-  // Image
-  var imgElt = document.createElement("img");
-  imgElt.src = url;
-  divElt.appendChild(imgElt);
+  
+  
   
   // Ratings
   if (restaurant.ratings.length !==0 ){
@@ -312,25 +342,24 @@ function information(restaurant){
       var liElt = document.createElement("li");
       // Check if exist comment      
       var comment = restaurant.ratings[i].comment=="" ? " | Pas de commentaire" : (" | Commentaire : " +restaurant.ratings[i].comment);
-      liElt.textContent = "Note : " + restaurant.ratings[i].stars + comment;
+      liElt.innerHTML = "<strong>Note : " + restaurant.ratings[i].stars + "</strong>" + comment ;
       ulElt.appendChild(liElt);
     };
     divElt.appendChild(ulElt);
   };
   document.getElementById('myModalBody').appendChild(divElt);
-  //
+  
+  // Form
   var formElt = document.createElement("form");
-  var labelElt = document.createElement("label");
-  labelElt.for = "rating";
-  labelElt.textContent = "Notez le restaurant : ";
-  formElt.appendChild(labelElt);
+  formElt.className ="md-form border border-light p-2";
   var selectElt = document.createElement("select");
   selectElt.id = "rating";
+  selectElt.className = "browser-default custom-select";
   // Required Option value
   selectElt.required = true; 
   var optionDefaultElt = document.createElement("option");
   optionDefaultElt.value = "";
-  optionDefaultElt.textContent = "votre note";
+  optionDefaultElt.textContent = "Notez le restaurant";
   selectElt.appendChild(optionDefaultElt);
   // Options
   for (i=0; i<6; i++) {
@@ -341,16 +370,18 @@ function information(restaurant){
   };
   formElt.appendChild(selectElt);
   textAreaElt = document.createElement("textarea");
+  textAreaElt.className = "md-textarea form-control";
   textAreaElt.id = "comment"
-  textAreaElt.rows = 5;
+  textAreaElt.rows = 3;
   textAreaElt.cols = 30;
   textAreaElt.placeholder = "Votre commentaire ...";
   formElt.appendChild(textAreaElt);
   var inputElt = document.createElement("input");
   inputElt.type = "submit";
   inputElt.value = "Valider";
+  inputElt.className = "btn btn-secondary";
   formElt.appendChild(inputElt);
-  // Display
+  // Display Form
   formElt.addEventListener("submit", function (e) {
   var rating = Number(formElt.elements.rating.value);
   var comment = formElt.elements.comment.value;
@@ -363,8 +394,8 @@ function information(restaurant){
   e.preventDefault(); 
   information(restaurant);
   });
+
   document.getElementById('myModalBody').appendChild(formElt);
   // We center the map on the location
-  map.setCenter(pos); 
-  
+  map.setCenter(pos);   
 }

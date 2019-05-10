@@ -85,7 +85,7 @@
 
   <!--Main layout-->
   <main class="mt-5 pt-5">
-    <div class="container">
+    <div id="mainPOV" class="container">
       
       <!--Section: Cards-->
       <section class="text-center">
@@ -99,25 +99,7 @@
             <!--Card-->
             <div class="card" id="map">
 
-              <!--Card image-->
-              <div class="view overlay">
-                <div class="embed-responsive embed-responsive-16by9 rounded-top">
-                  <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/cXTThxoywNQ" allowfullscreen></iframe>
-                </div>
-              </div>
-
-              <!--Card content-->
-              <div class="card-body">
-                <!--Title-->
-                <h4 class="card-title">MDB Quick Start</h4>
-                <!--Text-->
-                <p class="card-text">Get started with MDBootstrap, the world's most popular Material Design framework
-                  for building
-                  responsive, mobile-first sites.</p>
-                <p class="card-text">
-                  <strong>5 minutes, a few clicks and... done. You will be surprised at how easy it is.</strong>
-                </p>
-              </div>
+              Merci de contacter un administrateur
 
             </div>
             <!--/.Card-->
@@ -172,20 +154,22 @@
             <div class="modal fade right" id="sideModalTR" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
             aria-hidden="true">
             
-            <div class="modal-dialog modal-side modal-top-right" role="document">
+            <div class="modal-dialog" role="document">
 
               <div class="modal-content">
                 <div class="modal-header">
                   <h4 class="modal-title w-100" id="myModalLabel">Modal title</h4>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
-                  </button>
+                  </button>                  
                 </div>
+                <img id="myModalImg" src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80" 
+                  alt="Photo">
                 <div class="modal-body" id="myModalBody">
                   ...
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>                  
+                  <button type="button" class="btn btn-dark" data-dismiss="modal">Fermer</button>                  
                 </div>
               </div>
             </div>
@@ -225,7 +209,7 @@
                     </div>
                   
                     <div class="modal-footer d-flex justify-content-center">
-                      <input id="submitRestaurant" type="submit" class="btn btn-unique" value="Ajouter"/>                    
+                      <input id="submitRestaurant" type="submit" class="btn btn-success" value="Ajouter"/>                    
                     </div>
 
                   </form>
@@ -302,13 +286,7 @@
   src="https://maps.googleapis.com/maps/api/js?key=APIKEY&libraries=places&callback=initMap"
   async
   defer
-></script>
-  <!-- Initializations -->
-  <script type="text/javascript">
-    // Animations initialization
-    new WOW().init();
-
-  </script>
+  ></script>  
   
 </body>
 

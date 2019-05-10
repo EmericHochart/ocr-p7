@@ -19,6 +19,13 @@ ul {
     padding-left:0;
 }
 
+.modal {
+    top: 70px;    
+}
+
+img {
+    width:100%;    
+}
 
 /* Always set the map height explicitly to define the size of the div
 * element that contains the map. */
